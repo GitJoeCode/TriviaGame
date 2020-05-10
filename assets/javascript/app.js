@@ -45,120 +45,135 @@ var questions = [{
 var rightResponses = ["You know your friends!", "You're a great friend!", "Hey good lookin' ;P", "Did I see you at Central Perk?", "You know your stuff!"]
 
 function triviaQuestion(num) {
-    
+    reset();
+    start();
     $('#question').html(questions[num].question);
-    count --;
+    
     var optionsArray = questions[num].options;
     $("#options").empty();
 
     for(i=0; i<optionsArray.length; i++) {
         var optionButton = $("<button>");
         optionButton.text(optionsArray[i]);
-        optionButton.attr('data-name', i);
+        optionButton.attr('data-id', i);
         $("#options").append(optionButton);
     }
     
+    if(time != 0) {
+        $("#options").on('click', 'button', function() {
+            stop();
+            guess = $(this).data("id");
+            console.log(guess);
+            checkGuess(guess);
+        })
+    }
+    
+}
+function reset() {
 
-    $("#options").on('click', 'button', function() {
-        guess = $(this).data("name");
-        var rightAnswer = questions[0].answer;
-        var nextQuestion;
-        checkGuess(guess);
-       
-       
-        // if(guess === questions[track].answer) {
-        //     pause(counter);
-        //     var goodPick = Math.floor(Math.random() * rightResponses.length)
-        //     $("#options").text(rightResponses[goodPick])
-        //     correct ++;
-        //     nextQuestion = setTimeout(triviaQuestion(track), 5000);
-        // }
+    time = 10;
+  
+    $("#timer").text("10");
+  
+}
 
-        // else {
-        //     pause(counter);
-        //     $("#options").text("Good try but the answer we were looking for was " + questions[0].options[rightAnswer])
-        //     incorrect ++;
-        //     nextQuestion = setTimeout(triviaQuestion(track), 5000);
-        // }
-    })
+function start() {
 
+    if (!timerRunning) {
+      intervalId = setInterval(count, 1000);
+      timerRunning = true;
+    }
+}
+
+function stop() {
+
+    clearInterval(intervalId);
+    timerRunning = false;
+}
+
+function count() {
+
+    if(time != 0)
+        time--;
+    else {
+        stop();
+        var rightAnswer = questions[track].answer;
+        $("#options").text("You ran out of time! The answer friends were looking for was " + questions[track].options[rightAnswer])
+        time = -1;
+        unAnswered ++;
+    }
+    if(time == -1) {
+        start();
+    }
+    if(time == -4) {
+        stop();
+        nextQuestion();
+    }
+    var converted = timeConverter(time);
+
+    $("#timer").text(converted);
+}
+
+function timeConverter(t) {
+
+    var seconds = t
+  
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+    return seconds;
 }
 
 function checkGuess(guess) {
+    var rightAnswer = questions[track].answer;
     if(guess === questions[track].answer) {
         var goodPick = Math.floor(Math.random() * rightResponses.length)
         $("#options").text(rightResponses[goodPick])
         correct ++;
-
     }
     else {
         incorrect ++;
+        $("#options").text("Good try but the answer we were looking for was " + questions[track].options[rightAnswer])
+        
+    }
+    time = -1;
+    start();
+}
 
+function nextQuestion() {
+    track ++;
+    if(track<questions.length) {
+        next = setTimeout(triviaQuestion(track), 2000)
     }
-    count = 0;
-    if(currentQuestion < lastQuestion) {
-        track ++;
-        nextQuestion = setTimeout(triviaQuestion(track), 5000);
-    }
+    else
+    score();
 }
 
 $("#start").click(function(){
     $(this).hide();
-    counter = setInterval(timer, 1000); 
     triviaQuestion(track);
 }); 
     
-
-
-function timer() {
-    $("#timer").html(count + " seconds remaining")
-    count --;
-    if(count <= 0) {
-        
-        clearInterval(counter);
-        return;
-    }
+function score() {
+    // if((correct + incorrect) < 10) {
+    //     incorrect ++;
+    // }
+    $("#options").text("Number of Questions right: " + correct + " <br/> " + 
+    "Number of Questions wrong: " + incorrect + " <br/> " +
+    "Percentage: " + (correct/incorrect));
     
+    $("#options").append($("<button>"))
 }
 
-// function nextQuestion () {
-//     count ++;
-//     triviaQuestion(track);
-
-// }
-
-function pause() {
-    clearInterval;  
-}
-
-var count = 30;
+var unAnswered = 0;
+var next;
 var guess;
 var track = 0;
 var correct = 0;
 var incorrect = 0;
+let time = 10;
+var timerRunning = false;
 
 
-// $("#options").on('click', 'button', function() {
-//     guess = $(this).data("name");
-//     var rightAnswer = questions[0].answer;
-//     var nextQuestion;
-//     if(guess === questions[0].answer) {
-//         var goodPick = Math.floor(Math.random() * rightResponses.length)
-//         $("#options").text(rightResponses[goodPick])
-//         correct ++;
-//         nextQuestion = setTimeout(triviaQuestion(track), 5000);
-//     }
-//     else {
-//         $("#options").text("Good try but the answer we were looking for was " + questions[0].options[rightAnswer])
-//         incorrect ++;
-//         nextQuestion = setTimeout(triviaQuestion(track), 5000);
-//     }
-// })
 
-function startGame() {
-
-    showImage = setInterval(nextImage, 2000);
-  
-  
-  }
 

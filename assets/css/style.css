@@ -1,0 +1,37 @@
+body {
+    background-image: url("http://downtownsby.com/wp-content/uploads/2019/12/friendstrivia.jpg" );
+}
+
+#start {
+    height: 40px;
+    width: 150px;
+    
+}
+
+#timer {
+    font-size: 100px;
+    color: red;
+    height: 200px;
+    width: 200px;
+}
+
+#question {
+    font-size: 50px;
+    color: white;
+    background-color: teal;
+    font-family: 'Calligraffitti', cursive;
+}
+
+#options {
+    font-size: 50px;
+    background-color: hotpink;
+    color: gold;
+    overflow: auto;
+}
+
+button {
+    height: 75px;
+    width: 250px;
+    font-size: 20px;
+    overflow: auto;
+}
